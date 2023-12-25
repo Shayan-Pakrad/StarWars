@@ -21,18 +21,22 @@ void render(int map[HEIGHT][WIDTH]);
 char cell_to_string(int cell);
 vector<Point> generate_enemies();
 bool is_point_valid(vector<Point> points, Point point);
+bool enemies_in_a_row(int map[HEIGHT][WIDTH]);
 
 
 
 int main() {
 
   int map[HEIGHT][WIDTH] = {}; // defining the map array
+  do{
 
-  vector<Point> enemies = generate_enemies();
+    vector<Point> enemies = generate_enemies();
 
-  for (Point enemy : enemies){ // putting enemies on the map
-    map[enemy.y][enemy.x] = 2;
-  }
+    for (Point enemy : enemies){ // putting enemies on the map
+      map[enemy.y][enemy.x] = 2;
+    }
+
+  }while(enemies_in_a_row(map));
 
   render(map);
 }
@@ -106,4 +110,29 @@ bool is_point_valid(vector<Point> points, Point point){
     }
   }
   return true;
+}
+
+bool enemies_in_a_row(int map[HEIGHT][WIDTH]){
+
+  int enemy_counter;
+
+  for (int i=0; i < HEIGHT; i++){
+
+    enemy_counter = 0;
+
+    for (int j=0; j < WIDTH; j++){
+
+      if (map[i][j] == 2){
+        enemy_counter++;
+      }
+    }
+
+    if (enemy_counter == WIDTH){
+      return true;
+    }
+
+  }
+
+  return false;
+
 }
