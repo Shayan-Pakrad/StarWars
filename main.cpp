@@ -2,19 +2,19 @@
 
 using namespace std;
 
-const int HEIGHT = 4;
-const int WIDTH = 4;
+const int HEIGHT = 10;
+const int WIDTH = 10;
 
-void render(int map[WIDTH][HEIGHT]);
+void render(int map[HEIGHT][WIDTH]);
 char cell_to_string(int cell);
 
 int main() {
-  int map[WIDTH][HEIGHT] = {};
+  int map[HEIGHT][WIDTH] = {};
 
   render(map);
 }
 
-void render(int map[WIDTH][HEIGHT]) {
+void render(int map[HEIGHT][WIDTH]) {
   for (int ifor = 0; ifor < 2 * HEIGHT; ++ifor) {
     if (ifor % 2 == 0) {
       for (int j = 0; j < WIDTH; ++j) {
