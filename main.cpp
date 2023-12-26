@@ -2,6 +2,7 @@
 #include <ctime>
 #include <iostream>
 #include <vector>
+#include <conio.h>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ vector<Point> generate_enemies();
 bool is_point_valid(vector<Point> points, Point point);
 bool enemies_in_a_row(int map[HEIGHT][WIDTH]);
 Point generate_spaceship(vector<Point> enemies);
+void game_over();
 
 int main() {
 
@@ -46,10 +48,12 @@ int main() {
 
   int health = 3;
 
+  int enemy_number = NUMBER_OF_ENEMIES;
+
   render(map, health);
 
 
-  while (health > 0) {
+  while (health > 0 && enemy_number > 0) {
 
     char move_or_fire;
     cout << "Move or Fire or Quit(m, f, q) : ";
@@ -98,7 +102,7 @@ int main() {
         spaceship.y = y;
       }
 
-      else{
+      else if (map[y][x] == 2){
 
         health --;
         cout << "You lose one health, try again!";
@@ -112,6 +116,40 @@ int main() {
     }
 
     case 'f': {
+
+      char shot_direction;
+      cout << "left or right(a, d) : ";
+      cin >> shot_direction;
+
+      switch (shot_direction){
+
+      case 'a':{
+        for (int i = spaceship.x; i >= 0; i--){
+          if (map[spaceship.y][i] == 2){
+            map[spaceship.y][i] = 0;
+            enemy_number--;
+            break;
+          }
+        }
+        break;
+      }
+
+      case 'd':{
+        for (int i = spaceship.x; i <= WIDTH - 1; i++){
+          if (map[spaceship.y][i] == 2){
+            map[spaceship.y][i] = 0;
+            enemy_number--;
+            break;
+          }
+        }
+        break;
+      }
+      
+      default:
+        break;
+      }
+
+
       break;
     }
 
@@ -124,6 +162,8 @@ int main() {
 
     render(map, health);
   }
+
+  game_over();
 }
 
 void render(int map[HEIGHT][WIDTH], int health) {
@@ -235,4 +275,24 @@ Point generate_spaceship(vector<Point> enemies) {
   } while (!is_point_valid(enemies, spaceship));
 
   return spaceship;
+}
+
+
+void game_over(){
+#ifdef __linux__
+  system("clear");
+#else
+  system("cls");
+#endif 
+
+
+  cout << "---------------------\n";
+  cout << "|    GAME OVER!      |\n";
+  cout << "|  Better luck next  |\n";
+  cout << "|       time!        |\n";
+  cout << "---------------------\n";
+
+
+  getch();
+
 }
