@@ -95,12 +95,16 @@ int main() {
 
     map[spaceship.y][spaceship.x] = 1;
 
-    system("cls");
     render(map);
   }
 }
 
 void render(int map[HEIGHT][WIDTH]) {
+#ifdef __linux__
+  system("clear");
+#else
+  system("cls");
+#endif
 
   for (int ifor = 0; ifor < 2 * HEIGHT; ++ifor) {
     if (ifor % 2 == 0) {
