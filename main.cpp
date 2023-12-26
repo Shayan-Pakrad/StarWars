@@ -50,7 +50,7 @@ int main() {
   while (health > 0) {
 
     char move_or_fire;
-    cout << "Move or Fire(m, f) : ";
+    cout << "Move or Fire or Quit(m, f, q) : ";
     cin >> move_or_fire;
 
     switch (move_or_fire) {
@@ -91,6 +91,8 @@ int main() {
     case 'f': {
       break;
     }
+    case 'q':
+      exit(0);
     }
 
     map[spaceship.y][spaceship.x] = 1;
