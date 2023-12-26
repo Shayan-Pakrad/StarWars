@@ -97,6 +97,7 @@ int main() {
 
     map[spaceship.y][spaceship.x] = 1;
 
+    system("cls");
     render(map);
 
 
