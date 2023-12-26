@@ -59,7 +59,8 @@ int main() {
     cout << "Move or Fire(m, f) : ";
     cin >> move_or_fire;
 
-    if (move_or_fire == 'm'){
+    switch (move_or_fire) {
+    case 'm': {
 
       map[spaceship.y][spaceship.x] = 0;
 
@@ -72,7 +73,7 @@ int main() {
         if (0 <= spaceship.x-- <= 9){
           --spaceship.x;
         }
-        
+
       }
 
       else if (move == 'w'){
@@ -93,6 +94,11 @@ int main() {
         }
       }
 
+        break;
+    }
+    case 'f': {
+      break;
+    }
     }
 
     map[spaceship.y][spaceship.x] = 1;
@@ -102,7 +108,7 @@ int main() {
 
 
   }
-  
+
 }
 
 void render(int map[HEIGHT][WIDTH]) {
@@ -151,7 +157,7 @@ vector<Point> generate_enemies(){
 
   while (enemies.size() < NUMBER_OF_ENEMIES){
     Point enemy;
-    
+
     // randomly set the positions of the enemies
     enemy.x = rand() % WIDTH;
     enemy.y = rand() % HEIGHT;
@@ -210,6 +216,6 @@ Point generate_spaceship(vector<Point> enemies){
     spaceship.y = rand() % HEIGHT;
   }while(!is_point_valid(enemies, spaceship));
 
-  return spaceship;  
+  return spaceship;
 
 }
