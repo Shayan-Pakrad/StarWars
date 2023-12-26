@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 
+
 using namespace std;
 
 
@@ -29,21 +30,78 @@ Point generate_spaceship(vector<Point> enemies);
 int main() {
 
   int map[HEIGHT][WIDTH] = {}; // defining the map array
+  Point spaceship;
+  vector<Point> enemies;
+
   do{
 
-    vector<Point> enemies = generate_enemies();
+    enemies = generate_enemies();
 
     for (Point enemy : enemies){ // putting enemies on the map
       map[enemy.y][enemy.x] = 2;
     }
 
-    Point spaceship = generate_spaceship(enemies);
+  }while(enemies_in_a_row(map));
+
+  spaceship = generate_spaceship(enemies);
+
+  map[spaceship.y][spaceship.x] = 1;
+
+  render(map);
+
+  int health = 3;
+
+  
+
+  while (health > 0){
+
+    char move_or_fire;
+    cout << "Move or Fire(m, f) : ";
+    cin >> move_or_fire;
+
+    if (move_or_fire == 'm'){
+
+      map[spaceship.y][spaceship.x] = 0;
+
+
+      char move;
+      cout << "which direction(a, w, s, d) : ";
+      cin >> move;
+
+      if (move == 'a'){
+        if (0 <= spaceship.x-- <= 9){
+          --spaceship.x;
+        }
+        
+      }
+
+      else if (move == 'w'){
+        if (0 <= spaceship.y-- <= 9){
+          --spaceship.y;
+        }
+      }
+
+      else if (move == 's'){
+        if (0 <= spaceship.y++ <= 9){
+          ++spaceship.y;
+        }
+      }
+
+      else if(move == 'd'){
+        if (0 <= spaceship.x++ <= 9){
+          ++spaceship.x;
+        }
+      }
+
+    }
 
     map[spaceship.y][spaceship.x] = 1;
 
-  }while(enemies_in_a_row(map));
+    render(map);
 
-  render(map);
+
+  }
+  
 }
 
 void render(int map[HEIGHT][WIDTH]) {
