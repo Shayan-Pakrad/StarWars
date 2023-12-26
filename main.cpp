@@ -1,13 +1,11 @@
-#include <iostream>
-#include <vector>
 #include <cstdlib>
 #include <ctime>
-
+#include <iostream>
+#include <vector>
 
 using namespace std;
 
-
-struct Point{ // Point struct to handle the x and y of enemies and spaceship
+struct Point { // Point struct to handle the x and y of enemies and spaceship
   int x;
   int y;
 };
@@ -25,23 +23,21 @@ bool is_point_valid(vector<Point> points, Point point);
 bool enemies_in_a_row(int map[HEIGHT][WIDTH]);
 Point generate_spaceship(vector<Point> enemies);
 
-
-
 int main() {
 
   int map[HEIGHT][WIDTH] = {}; // defining the map array
   Point spaceship;
   vector<Point> enemies;
 
-  do{
+  do {
 
     enemies = generate_enemies();
 
-    for (Point enemy : enemies){ // putting enemies on the map
+    for (Point enemy : enemies) { // putting enemies on the map
       map[enemy.y][enemy.x] = 2;
     }
 
-  }while(enemies_in_a_row(map));
+  } while (enemies_in_a_row(map));
 
   spaceship = generate_spaceship(enemies);
 
@@ -51,9 +47,7 @@ int main() {
 
   int health = 3;
 
-  
-
-  while (health > 0){
+  while (health > 0) {
 
     char move_or_fire;
     cout << "Move or Fire(m, f) : ";
@@ -64,29 +58,28 @@ int main() {
 
       map[spaceship.y][spaceship.x] = 0;
 
-
       char move;
       cout << "which direction(a, w, s, d) : ";
       cin >> move;
 
-      switch (move){
+      switch (move) {
       case 'w':
         if (spaceship.y > 0)
-            spaceship.y--;
+          spaceship.y--;
         break;
 
       case 'a':
         if (spaceship.x > 0)
-            spaceship.x--;
+          spaceship.x--;
         break;
 
       case 's':
-        if (spaceship.y < HEIGHT-1)
+        if (spaceship.y < HEIGHT - 1)
           spaceship.y++;
         break;
 
       case 'd':
-        if (spaceship.x < WIDTH-1)
+        if (spaceship.x < WIDTH - 1)
           spaceship.x++;
         break;
       }
@@ -104,10 +97,7 @@ int main() {
 
     system("cls");
     render(map);
-
-
   }
-
 }
 
 void render(int map[HEIGHT][WIDTH]) {
@@ -148,73 +138,68 @@ char cell_to_string(int cell) { // decide which character should be displayed
   }
 }
 
-vector<Point> generate_enemies(){
+vector<Point> generate_enemies() {
 
   srand(time(0));
 
   vector<Point> enemies;
 
-  while (enemies.size() < NUMBER_OF_ENEMIES){
+  while (enemies.size() < NUMBER_OF_ENEMIES) {
     Point enemy;
 
     // randomly set the positions of the enemies
     enemy.x = rand() % WIDTH;
     enemy.y = rand() % HEIGHT;
 
-    if (is_point_valid(enemies, enemy)){ // checks if the enemy is new
+    if (is_point_valid(enemies, enemy)) { // checks if the enemy is new
       enemies.push_back(enemy);
     }
-
   }
 
   return enemies;
-
 }
 
-bool is_point_valid(vector<Point> points, Point point){
+bool is_point_valid(vector<Point> points, Point point) {
 
-  for (Point p : points){
-    if (p.x == point.x && p.y == point.y){
+  for (Point p : points) {
+    if (p.x == point.x && p.y == point.y) {
       return false;
     }
   }
   return true;
 }
 
-bool enemies_in_a_row(int map[HEIGHT][WIDTH]){
+bool enemies_in_a_row(int map[HEIGHT][WIDTH]) {
 
   int enemy_counter;
 
-  for (int i=0; i < HEIGHT; i++){
+  for (int i = 0; i < HEIGHT; i++) {
 
     enemy_counter = 0;
 
-    for (int j=0; j < WIDTH; j++){
+    for (int j = 0; j < WIDTH; j++) {
 
-      if (map[i][j] == 2){
+      if (map[i][j] == 2) {
         enemy_counter++;
       }
     }
 
-    if (enemy_counter == WIDTH){
+    if (enemy_counter == WIDTH) {
       return true;
     }
-
   }
 
   return false;
-
 }
 
-Point generate_spaceship(vector<Point> enemies){
+Point generate_spaceship(vector<Point> enemies) {
 
   Point spaceship;
 
-  do{
+  do {
     spaceship.x = rand() % WIDTH;
     spaceship.y = rand() % HEIGHT;
-  }while(!is_point_valid(enemies, spaceship));
+  } while (!is_point_valid(enemies, spaceship));
 
   return spaceship;
-
 }
