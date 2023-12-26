@@ -22,6 +22,7 @@ char cell_to_string(int cell);
 vector<Point> generate_enemies();
 bool is_point_valid(vector<Point> points, Point point);
 bool enemies_in_a_row(int map[HEIGHT][WIDTH]);
+Point generate_spaceship(vector<Point> enemies);
 
 
 
@@ -35,6 +36,10 @@ int main() {
     for (Point enemy : enemies){ // putting enemies on the map
       map[enemy.y][enemy.x] = 2;
     }
+
+    Point spaceship = generate_spaceship(enemies);
+
+    map[spaceship.y][spaceship.x] = 1;
 
   }while(enemies_in_a_row(map));
 
@@ -134,5 +139,18 @@ bool enemies_in_a_row(int map[HEIGHT][WIDTH]){
   }
 
   return false;
+
+}
+
+Point generate_spaceship(vector<Point> enemies){
+
+  Point spaceship;
+
+  do{
+    spaceship.x = rand() % WIDTH;
+    spaceship.y = rand() % HEIGHT;
+  }while(!is_point_valid(enemies, spaceship));
+
+  return spaceship;  
 
 }
