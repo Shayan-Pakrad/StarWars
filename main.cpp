@@ -16,7 +16,7 @@ const int WIDTH = 10;
 const int NUMBER_OF_ENEMIES = 10;
 
 // functions prototypes
-void render(int map[HEIGHT][WIDTH]);
+void render(int map[HEIGHT][WIDTH], int health);
 char cell_to_string(int cell);
 vector<Point> generate_enemies();
 bool is_point_valid(vector<Point> points, Point point);
@@ -43,9 +43,11 @@ int main() {
 
   map[spaceship.y][spaceship.x] = 1;
 
-  render(map);
 
   int health = 3;
+
+  render(map, health);
+
 
   while (health > 0) {
 
@@ -54,59 +56,84 @@ int main() {
     cin >> move_or_fire;
 
     switch (move_or_fire) {
+
     case 'm': {
 
-      map[spaceship.y][spaceship.x] = 0;
 
       char move;
       cout << "which direction(a, w, s, d) : ";
       cin >> move;
 
+      int x, y;
+
+      x = spaceship.x;
+      y = spaceship.y;
+
       switch (move) {
       case 'w':
         if (spaceship.y > 0)
-          spaceship.y--;
+          y--;
         break;
 
       case 'a':
         if (spaceship.x > 0)
-          spaceship.x--;
+          x--;
         break;
 
       case 's':
         if (spaceship.y < HEIGHT - 1)
-          spaceship.y++;
+          y++;
         break;
 
       case 'd':
         if (spaceship.x < WIDTH - 1)
-          spaceship.x++;
+          x++;
         break;
       }
 
-      map[spaceship.y][spaceship.x] = 1;
+      if (map[y][x] == 0){
+        map[spaceship.y][spaceship.x] = 0;
+        map[y][x] = 1;
+        spaceship.x = x;
+        spaceship.y = y;
+      }
+
+      else{
+
+        health --;
+        cout << "You lose one health, try again!";
+        render(map, health);
+        continue; // go back to the start of the loop
+
+      }
+      
 
       break;
     }
+
     case 'f': {
       break;
     }
+
     case 'q':
       exit(0);
+
     }
 
     map[spaceship.y][spaceship.x] = 1;
 
-    render(map);
+    render(map, health);
   }
 }
 
-void render(int map[HEIGHT][WIDTH]) {
+void render(int map[HEIGHT][WIDTH], int health) {
 #ifdef __linux__
   system("clear");
 #else
   system("cls");
 #endif
+
+  cout << "health : " << health << endl;
 
   for (int ifor = 0; ifor < 2 * HEIGHT; ++ifor) {
     if (ifor % 2 == 0) {
