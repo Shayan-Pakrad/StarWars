@@ -69,32 +69,31 @@ int main() {
       cout << "which direction(a, w, s, d) : ";
       cin >> move;
 
-      if (move == 'a'){
-        if (0 <= spaceship.x-- <= 9){
-          --spaceship.x;
-        }
-
-      }
-
-      else if (move == 'w'){
-        if (0 <= spaceship.y-- <= 9){
-          --spaceship.y;
-        }
-      }
-
-      else if (move == 's'){
-        if (0 <= spaceship.y++ <= 9){
-          ++spaceship.y;
-        }
-      }
-
-      else if(move == 'd'){
-        if (0 <= spaceship.x++ <= 9){
-          ++spaceship.x;
-        }
-      }
-
+      switch (move){
+      case 'w':
+        if (spaceship.y > 0)
+            spaceship.y--;
         break;
+
+      case 'a':
+        if (spaceship.x > 0)
+            spaceship.x--;
+        break;
+
+      case 's':
+        if (spaceship.y < HEIGHT-1)
+          spaceship.y++;
+        break;
+
+      case 'd':
+        if (spaceship.x < WIDTH-1)
+          spaceship.x++;
+        break;
+      }
+
+      map[spaceship.y][spaceship.x] = 1;
+
+      break;
     }
     case 'f': {
       break;
