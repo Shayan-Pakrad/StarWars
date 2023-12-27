@@ -211,14 +211,29 @@ int main() {
 
     if (game.health == 0) {
       clear();
-      cout << "Game over" << endl;
-      getc(stdin);
+
+      cout << " --------------------\n";
+      cout << "|     YOU LOSE!      |\n";
+      cout << "|  Better luck next  |\n";
+      cout << "|       time!        |\n";
+      cout << " --------------------\n";
+
+      char c;
+      cin >> c;
+
       exit(0);
     }
     if (game.num_enemies == 0) {
       clear();
-      cout << "You won!" << endl;
-      getc(stdin);
+
+      cout << " --------------------\n";
+      cout << "|      YOU WON!      |\n";
+      cout << "|  Congratulations!  |\n";
+      cout << " --------------------\n";
+
+      char c;
+      cin >> c;
+
       exit(0);
     }
 
