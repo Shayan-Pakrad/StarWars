@@ -3,8 +3,6 @@
 #include <iostream>
 #include <vector>
 
-// TODO: use rand_range instead of rand
-
 using namespace std;
 
 /**
