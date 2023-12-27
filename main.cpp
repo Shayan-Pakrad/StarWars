@@ -21,6 +21,55 @@ struct Game {
   bool (*map)[10];
 };
 
+void generate_enemies(bool map[SIZE][SIZE], int num_enemies);
+bool contains_full_row(bool map[SIZE][SIZE]);
+bool contains_full_col(bool map[SIZE][SIZE]);
+Game init_game(bool map[SIZE][SIZE]);
+void clear();
+void render(const Game &game);
+void handle_input(Game &game);
+
+int main() {
+  srand(time(0));
+
+  bool map[SIZE][SIZE] = {};
+  Game game = init_game(map);
+
+  while (true) {
+    render(game);
+
+    if (game.health == 0) {
+      clear();
+
+      cout << " --------------------\n";
+      cout << "|     YOU LOSE!      |\n";
+      cout << "|  Better luck next  |\n";
+      cout << "|       time!        |\n";
+      cout << " --------------------\n";
+
+      char c;
+      cin >> c;
+
+      exit(0);
+    }
+    if (game.num_enemies == 0) {
+      clear();
+
+      cout << " --------------------\n";
+      cout << "|      YOU WON!      |\n";
+      cout << "|  Congratulations!  |\n";
+      cout << " --------------------\n";
+
+      char c;
+      cin >> c;
+
+      exit(0);
+    }
+
+    handle_input(game);
+  }
+}
+
 void generate_enemies(bool map[SIZE][SIZE], int num_enemies) {
   int num_inserted_enemies = 0;
 
@@ -210,46 +259,5 @@ void handle_input(Game &game) {
     default:
       cout << "error: invalid input\n\n";
     }
-  }
-}
-
-int main() {
-  srand(time(0));
-
-  bool map[SIZE][SIZE] = {};
-  Game game = init_game(map);
-
-  while (true) {
-    render(game);
-
-    if (game.health == 0) {
-      clear();
-
-      cout << " --------------------\n";
-      cout << "|     YOU LOSE!      |\n";
-      cout << "|  Better luck next  |\n";
-      cout << "|       time!        |\n";
-      cout << " --------------------\n";
-
-      char c;
-      cin >> c;
-
-      exit(0);
-    }
-    if (game.num_enemies == 0) {
-      clear();
-
-      cout << " --------------------\n";
-      cout << "|      YOU WON!      |\n";
-      cout << "|  Congratulations!  |\n";
-      cout << " --------------------\n";
-
-      char c;
-      cin >> c;
-
-      exit(0);
-    }
-
-    handle_input(game);
   }
 }
