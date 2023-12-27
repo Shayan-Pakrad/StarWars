@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-// TODO: document all defined types and declared functions.
+// TODO: use rand_range instead of rand
 
 using namespace std;
 
@@ -40,13 +40,45 @@ struct Game {
   bool (*map)[10];
 };
 
+/**
+ * Returns a random number in range [a, b).
+ */
 int rand_range(int a, int b);
-void generate_enemies(bool map[SIZE][SIZE], int num_enemies);
+
+/**
+ * Generates n enemies on the map randomly.
+ */
+void generate_enemies(bool map[SIZE][SIZE], int n);
+
+/**
+ * Checks whether map contains any full row.
+ */
 bool contains_full_row(bool map[SIZE][SIZE]);
+
+/**
+ * Checks whether map contains any full column.
+ */
 bool contains_full_col(bool map[SIZE][SIZE]);
+
+/**
+ * Initializes the game object with either zero values or randomly generated
+ * values.
+ */
 Game init_game(bool map[SIZE][SIZE]);
+
+/**
+ * Clears the terminal screen.
+ */
 void clear();
+
+/**
+ * Prints the state of game on the screen.
+ */
 void render(const Game &game);
+
+/**
+ * Handles user inputs infinitely until user quits.
+ */
 void handle_input(Game &game);
 
 int main() {
@@ -92,10 +124,10 @@ int main() {
 
 int rand_range(int a, int b) { return rand() % (b - a) + a; }
 
-void generate_enemies(bool map[SIZE][SIZE], int num_enemies) {
+void generate_enemies(bool map[SIZE][SIZE], int n) {
   int num_inserted_enemies = 0;
 
-  while (num_inserted_enemies < num_enemies) {
+  while (num_inserted_enemies < n) {
     Point p = {
         .x = rand() % SIZE,
         .y = rand() % SIZE,
