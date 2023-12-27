@@ -13,6 +13,16 @@ using namespace std;
 const int SIZE = 10;
 
 /**
+ * Minimum number of enemies spawned.
+ */
+const int MIN_ENEMIES = SIZE;
+
+/**
+ * Maximum number of enemies spawned.
+ */
+const int MAX_ENEMIES = SIZE + 5;
+
+/**
  * Represents a 2-dimensional vector.
  */
 struct Point {
@@ -30,6 +40,7 @@ struct Game {
   bool (*map)[10];
 };
 
+int rand_range(int a, int b);
 void generate_enemies(bool map[SIZE][SIZE], int num_enemies);
 bool contains_full_row(bool map[SIZE][SIZE]);
 bool contains_full_col(bool map[SIZE][SIZE]);
@@ -78,6 +89,8 @@ int main() {
     handle_input(game);
   }
 }
+
+int rand_range(int a, int b) { return rand() % (b - a) + a; }
 
 void generate_enemies(bool map[SIZE][SIZE], int num_enemies) {
   int num_inserted_enemies = 0;
@@ -130,7 +143,7 @@ bool contains_full_col(bool map[SIZE][SIZE]) {
 }
 
 Game init_game(bool map[SIZE][SIZE]) {
-  int num_enemies = SIZE + rand() % 5;
+  int num_enemies = rand_range(MIN_ENEMIES, MAX_ENEMIES + 1);
 
   do {
     generate_enemies(map, num_enemies);
