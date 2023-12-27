@@ -183,10 +183,22 @@ void handle_input(Game &game) {
 
       switch (dir) {
       case 'a':
-        // TODO
+        for (int j = game.spaceship.x - 1; j >= 0; --j) {
+          if (game.map[game.spaceship.y][j]) {
+            game.map[game.spaceship.y][j] = false;
+            --game.num_enemies;
+            break;
+          }
+        }
         break;
       case 'd':
-        // TODO
+        for (int j = game.spaceship.x + 1; j < SIZE; ++j) {
+          if (game.map[game.spaceship.y][j]) {
+            game.map[game.spaceship.y][j] = false;
+            --game.num_enemies;
+            break;
+          }
+        }
         break;
       }
 
