@@ -172,6 +172,7 @@ void handle_input(Game &game) {
       if (game.map[game.spaceship.y][game.spaceship.x]) {
         game.map[game.spaceship.y][game.spaceship.x] = false;
         --game.health;
+        --game.num_enemies;
       }
 
       return;
