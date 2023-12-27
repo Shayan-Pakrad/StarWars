@@ -2,7 +2,6 @@
 #include <ctime>
 #include <iostream>
 #include <vector>
-#include <conio.h>
 
 using namespace std;
 
@@ -293,6 +292,6 @@ void game_over(){
   cout << "---------------------\n";
 
 
-  getch();
+  getc(stdin);
 
 }
