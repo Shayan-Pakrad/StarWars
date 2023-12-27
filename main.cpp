@@ -7,13 +7,22 @@
 
 using namespace std;
 
+/**
+ * Determines number of rows and columns.
+ */
 const int SIZE = 10;
 
+/**
+ * Represents a 2-dimensional vector.
+ */
 struct Point {
   int x;
   int y;
 };
 
+/**
+ * Stores game state.
+ */
 struct Game {
   int num_enemies;
   int health;
