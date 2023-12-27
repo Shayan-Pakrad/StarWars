@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+// TODO: document all defined types and declared functions.
+
 using namespace std;
 
 const int SIZE = 10;
