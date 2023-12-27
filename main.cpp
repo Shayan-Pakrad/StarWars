@@ -16,8 +16,8 @@ struct Point { // Point struct to handle the x and y of enemies and spaceship
 
 struct Game {
   int num_enemies;
-  Point spaceship;
   int health;
+  Point spaceship;
   bool (*map)[10];
 };
 
@@ -86,8 +86,8 @@ Game init_game(bool map[SIZE][SIZE]) {
 
   Game game = {
       .num_enemies = num_enemies,
-      .spaceship = spaceship,
       .health = 3,
+      .spaceship = spaceship,
       .map = map,
   };
 
