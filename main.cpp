@@ -5,173 +5,107 @@
 
 using namespace std;
 
+// defining some settings of the game
+const int SIZE = 10;
+const int NUMBER_OF_ENEMIES = 10;
+
 struct Point { // Point struct to handle the x and y of enemies and spaceship
   int x;
   int y;
 };
 
-// defining some settings of the game
-const int SIZE = 10;
-const int NUMBER_OF_ENEMIES = 10;
-
-// functions prototypes
-void render(int map[SIZE][SIZE], int health);
-char cell_to_string(int cell);
-vector<Point> generate_enemies();
-bool is_point_valid(vector<Point> points, Point point);
-bool enemies_in_a_row(int map[SIZE][SIZE]);
-Point generate_spaceship(vector<Point> enemies);
-void game_over();
-
-int main() {
-
-  int map[SIZE][SIZE] = {}; // defining the map array
+struct Game {
+  int num_enemies;
   Point spaceship;
-  vector<Point> enemies;
+  int health;
+  bool (*map)[10];
+};
 
-  do {
+void generate_enemies(bool map[SIZE][SIZE], int num_enemies) {
+  int num_inserted_enemies = 0;
 
-    enemies = generate_enemies();
+  while (num_inserted_enemies < num_enemies) {
+    Point p = {
+        .x = rand() % SIZE,
+        .y = rand() % SIZE,
+    };
 
-    for (Point enemy : enemies) { // putting enemies on the map
-      map[enemy.y][enemy.x] = 2;
+    if (!map[p.y][p.x]) {
+      map[p.y][p.x] = true;
+      ++num_inserted_enemies;
     }
-
-  } while (enemies_in_a_row(map));
-
-  spaceship = generate_spaceship(enemies);
-
-  map[spaceship.y][spaceship.x] = 1;
-
-
-  int health = 3;
-
-  int enemy_number = NUMBER_OF_ENEMIES;
-
-  render(map, health);
-
-
-  while (health > 0 && enemy_number > 0) {
-
-    char move_or_fire;
-    cout << "Move or Fire or Quit(m, f, q) : ";
-    cin >> move_or_fire;
-
-    switch (move_or_fire) {
-
-    case 'm': {
-
-
-      char move;
-      cout << "which direction(a, w, s, d) : ";
-      cin >> move;
-
-      int x, y;
-
-      x = spaceship.x;
-      y = spaceship.y;
-
-      switch (move) {
-      case 'w':
-        if (spaceship.y > 0)
-          y--;
-        break;
-
-      case 'a':
-        if (spaceship.x > 0)
-          x--;
-        break;
-
-      case 's':
-        if (spaceship.y < SIZE - 1)
-          y++;
-        break;
-
-      case 'd':
-        if (spaceship.x < SIZE - 1)
-          x++;
-        break;
-      }
-
-      if (map[y][x] == 0){
-        map[spaceship.y][spaceship.x] = 0;
-        map[y][x] = 1;
-        spaceship.x = x;
-        spaceship.y = y;
-      }
-
-      else if (map[y][x] == 2){
-
-        health --;
-        cout << "You lose one health, try again!";
-        render(map, health);
-        continue; // go back to the start of the loop
-
-      }
-      
-
-      break;
-    }
-
-    case 'f': {
-
-      char shot_direction;
-      cout << "left or right(a, d) : ";
-      cin >> shot_direction;
-
-      switch (shot_direction){
-
-      case 'a':{
-        for (int i = spaceship.x; i >= 0; i--){
-          if (map[spaceship.y][i] == 2){
-            map[spaceship.y][i] = 0;
-            enemy_number--;
-            break;
-          }
-        }
-        break;
-      }
-
-      case 'd':{
-        for (int i = spaceship.x; i <= SIZE - 1; i++){
-          if (map[spaceship.y][i] == 2){
-            map[spaceship.y][i] = 0;
-            enemy_number--;
-            break;
-          }
-        }
-        break;
-      }
-      
-      default:
-        break;
-      }
-
-
-      break;
-    }
-
-    case 'q':
-      exit(0);
-
-    }
-
-    map[spaceship.y][spaceship.x] = 1;
-
-    render(map, health);
   }
-
-  game_over();
 }
 
-void render(int map[SIZE][SIZE], int health) {
+bool contains_full_row(bool map[SIZE][SIZE]) {
+  for (int i = 0; i < SIZE; ++i) {
+    bool full = true;
+    for (int j = 0; j < SIZE; ++j) {
+      if (!map[i][j]) {
+        full = false;
+      }
+    }
+
+    if (full) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool contains_full_col(bool map[SIZE][SIZE]) {
+  for (int i = 0; i < SIZE; ++i) {
+    bool full = true;
+    for (int j = 0; j < SIZE; ++j) {
+      if (!map[j][i]) {
+        full = false;
+      }
+    }
+
+    if (full) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+Game init_game(bool map[SIZE][SIZE]) {
+  int num_enemies = SIZE + rand() % 5;
+
+  do {
+    generate_enemies(map, num_enemies);
+  } while (contains_full_row(map) || contains_full_col(map));
+
+  Point spaceship;
+  do {
+    spaceship.y = rand() % SIZE;
+    spaceship.x = rand() % SIZE;
+  } while (map[spaceship.y][spaceship.x]);
+
+  Game game = {
+      .num_enemies = num_enemies,
+      .spaceship = spaceship,
+      .health = 3,
+      .map = map,
+  };
+
+  return game;
+}
+
+void clear() {
 #ifdef __linux__
   system("clear");
 #else
   system("cls");
 #endif
+}
 
-  cout << "health : " << health << endl;
+void render(const Game &game) {
+  clear();
+
+  cout << "health: " << game.health << "\n\n";
 
   for (int ifor = 0; ifor < 2 * SIZE; ++ifor) {
     if (ifor % 2 == 0) {
@@ -185,7 +119,14 @@ void render(int map[SIZE][SIZE], int health) {
 
     int i = ifor / 2;
     for (int j = 0; j < SIZE; ++j) {
-      cout << "| " << cell_to_string(map[i][j]) << " ";
+      char ch = ' ';
+      if (game.spaceship.y == i && game.spaceship.x == j) {
+        ch = 'O';
+      } else if (game.map[i][j]) {
+        ch = '*';
+      }
+
+      cout << "| " << ch << " ";
     }
 
     cout << "|" << endl;
@@ -197,100 +138,90 @@ void render(int map[SIZE][SIZE], int health) {
   cout << endl;
 }
 
-char cell_to_string(int cell) { // decide which character should be displayed
+void handle_input(Game &game) {
+  while (true) {
+    char cmd;
+    cout << "[M]ove, [A]ttack, or [Q]uit (m|a|q): ";
+    cin >> cmd;
 
-  switch (cell) {
-  case 1:
-    return 'O';
-  case 2:
-    return '*';
-  default:
-    return ' ';
+    switch (tolower(cmd)) {
+    case 'm': {
+      char dir;
+      cout << "Choose a direction (w|a|s|d): ";
+      cin >> dir;
+
+      switch (dir) {
+      case 'w':
+        if (game.spaceship.y > 0)
+          --game.spaceship.y;
+        break;
+      case 'a':
+        if (game.spaceship.x > 0)
+          --game.spaceship.x;
+        break;
+      case 's':
+        if (game.spaceship.y < SIZE - 1)
+          ++game.spaceship.y;
+        break;
+      case 'd':
+        if (game.spaceship.x < SIZE - 1)
+          ++game.spaceship.x;
+        break;
+      }
+
+      if (game.map[game.spaceship.y][game.spaceship.x]) {
+        game.map[game.spaceship.y][game.spaceship.x] = false;
+        --game.health;
+      }
+
+      return;
+    }
+    case 'a': {
+      char dir;
+      cout << "Choose a direction (a|d): ";
+      cin >> dir;
+
+      switch (dir) {
+      case 'a':
+        // TODO
+        break;
+      case 'd':
+        // TODO
+        break;
+      }
+
+      return;
+    }
+    case 'q':
+      exit(0);
+    default:
+      cout << "error: invalid input\n\n";
+    }
   }
 }
 
-vector<Point> generate_enemies() {
-
+int main() {
   srand(time(0));
 
-  vector<Point> enemies;
+  bool map[SIZE][SIZE] = {};
+  Game game = init_game(map);
 
-  while (enemies.size() < NUMBER_OF_ENEMIES) {
-    Point enemy;
+  while (true) {
+    render(game);
 
-    // randomly set the positions of the enemies
-    enemy.x = rand() % SIZE;
-    enemy.y = rand() % SIZE;
-
-    if (is_point_valid(enemies, enemy)) { // checks if the enemy is new
-      enemies.push_back(enemy);
+    if (game.health == 0) {
+      clear();
+      cout << "Game over" << endl;
+      getc(stdin);
+      exit(0);
     }
+    if (game.num_enemies == 0) {
+      clear();
+      cout << "You won!" << endl;
+      getc(stdin);
+      exit(0);
+    }
+
+    handle_input(game);
   }
-
-  return enemies;
-}
-
-bool is_point_valid(vector<Point> points, Point point) {
-
-  for (Point p : points) {
-    if (p.x == point.x && p.y == point.y) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool enemies_in_a_row(int map[SIZE][SIZE]) {
-
-  int enemy_counter;
-
-  for (int i = 0; i < SIZE; i++) {
-
-    enemy_counter = 0;
-
-    for (int j = 0; j < SIZE; j++) {
-
-      if (map[i][j] == 2) {
-        enemy_counter++;
-      }
-    }
-
-    if (enemy_counter == SIZE) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-Point generate_spaceship(vector<Point> enemies) {
-
-  Point spaceship;
-
-  do {
-    spaceship.x = rand() % SIZE;
-    spaceship.y = rand() % SIZE;
-  } while (!is_point_valid(enemies, spaceship));
-
-  return spaceship;
-}
-
-
-void game_over(){
-#ifdef __linux__
-  system("clear");
-#else
-  system("cls");
-#endif 
-
-
-  cout << "---------------------\n";
-  cout << "|    GAME OVER!      |\n";
-  cout << "|  Better luck next  |\n";
-  cout << "|       time!        |\n";
-  cout << "---------------------\n";
-
-
-  getc(stdin);
-
 }
