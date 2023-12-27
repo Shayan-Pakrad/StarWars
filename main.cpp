@@ -5,11 +5,9 @@
 
 using namespace std;
 
-// defining some settings of the game
 const int SIZE = 10;
-const int NUMBER_OF_ENEMIES = 10;
 
-struct Point { // Point struct to handle the x and y of enemies and spaceship
+struct Point {
   int x;
   int y;
 };
