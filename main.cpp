@@ -34,6 +34,7 @@ struct Point {
 struct Game {
   int num_enemies;
   int health;
+  Point spaceship_init;
   Point spaceship;
   bool (*map)[10];
 };
@@ -188,6 +189,7 @@ Game init_game(bool map[SIZE][SIZE]) {
   Game game = {
       .num_enemies = num_enemies,
       .health = 3,
+      .spaceship_init = spaceship,
       .spaceship = spaceship,
       .map = map,
   };
@@ -271,9 +273,8 @@ void handle_input(Game &game) {
       }
 
       if (game.map[game.spaceship.y][game.spaceship.x]) {
-        game.map[game.spaceship.y][game.spaceship.x] = false;
         --game.health;
-        --game.num_enemies;
+        game.spaceship = game.spaceship_init;
       }
 
       return;
