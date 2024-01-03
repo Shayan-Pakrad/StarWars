@@ -11,6 +11,7 @@
 #include <ctime>
 #include <iostream>
 #include <vector>
+#include <conio.h>
 
 using namespace std;
 
@@ -116,6 +117,8 @@ int main() {
     if (game.health == 0) {
       clear();
 
+      setConsoleColor(4);
+
       cout << " --------------------\n";
       cout << "|     YOU LOSE!      |\n";
       cout << "|  Better luck next  |\n";
@@ -129,6 +132,8 @@ int main() {
     }
     if (game.num_enemies == 0) {
       clear();
+
+      setConsoleColor(9);
 
       cout << " --------------------\n";
       cout << "|      YOU WON!      |\n";
@@ -278,74 +283,71 @@ void handle_input(Game &game) {
   
 
   while (true) {
-    char cmd;
-    cout << endl << "[M]ove, [A]ttack, or [Q]uit (m|a|q): ";
-    cin >> cmd;
+    unsigned char key;
+    cout << endl << "A : fire to right side, D : fire to left side ";
+    cout << endl << "Use arrow keys to move ";
+    key = _getch();
 
-    switch (tolower(cmd)) {
-    case 'm': {
-      char dir;
-      cout << "Choose a direction (w|a|s|d): ";
-      cin >> dir;
+    switch (key) {
+    case 224: {
+        int dir;
+        dir = _getch();
 
-      switch (dir) {
-      case 'w':
-        if (game.spaceship.y > 0)
-          --game.spaceship.y;
-        break;
-      case 'a':
-        if (game.spaceship.x > 0)
-          --game.spaceship.x;
-        break;
-      case 's':
-        if (game.spaceship.y < MAP_SIZE - 1)
-          ++game.spaceship.y;
-        break;
-      case 'd':
-        if (game.spaceship.x < MAP_SIZE - 1)
-          ++game.spaceship.x;
-        break;
-      }
+        switch (dir) {
+        case 72:
+            if (game.spaceship.y > 0)
+                --game.spaceship.y;
+            break;
+        case 75:
+            if (game.spaceship.x > 0)
+                --game.spaceship.x;
+            break;
+        case 80:
+            if (game.spaceship.y < MAP_SIZE - 1)
+                ++game.spaceship.y;
+            break;
+        case 77:
+            if (game.spaceship.x < MAP_SIZE - 1)
+                ++game.spaceship.x;
+            break;
+        }
 
-      if (game.map[game.spaceship.y][game.spaceship.x]) {
-        --game.health;
-        game.spaceship = game.spaceship_init;
-      }
+        if (game.map[game.spaceship.y][game.spaceship.x]) {
+            --game.health;
+            game.spaceship = game.spaceship_init;
+        }
 
-      return;
+        return;
     }
-    case 'a': {
-      char dir;
-      cout << "Choose a direction (a|d): ";
-      cin >> dir;
-
-      switch (dir) {
-      case 'a':
+    case 'a':
+    case 'A': {
         for (int j = game.spaceship.x - 1; j >= 0; --j) {
-          if (game.map[game.spaceship.y][j]) {
-            game.map[game.spaceship.y][j] = false;
-            --game.num_enemies;
-            break;
-          }
+            if (game.map[game.spaceship.y][j]) {
+                game.map[game.spaceship.y][j] = false;
+                --game.num_enemies;
+                break;
+            }
         }
-        break;
-      case 'd':
+        return;
+    }
+    case 'd':
+    case 'D': {
         for (int j = game.spaceship.x + 1; j < MAP_SIZE; ++j) {
-          if (game.map[game.spaceship.y][j]) {
-            game.map[game.spaceship.y][j] = false;
-            --game.num_enemies;
-            break;
-          }
+            if (game.map[game.spaceship.y][j]) {
+                game.map[game.spaceship.y][j] = false;
+                --game.num_enemies;
+                break;
+            }
         }
-        break;
-      }
-
-      return;
+        return;
     }
     case 'q':
+    case 'Q':
       exit(0);
     default:
-      cout << "error: invalid input\n\n";
+      setConsoleColor(4);
+      cout << endl << "error: invalid input\n\n";
+      setConsoleColor(15);
     }
   }
 }
