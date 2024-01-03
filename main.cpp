@@ -1,3 +1,12 @@
+/**
+ * Choose the right header for changing the color of console later
+ */
+#ifdef _WIN32 // Windows
+#include <windows.h>
+#else // Unix-based systems
+#include <unistd.h>
+#endif
+
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -8,17 +17,17 @@ using namespace std;
 /**
  * Determines number of rows and columns.
  */
-const int SIZE = 10;
+const int MAP_SIZE = 10;
 
 /**
  * Minimum number of enemies spawned.
  */
-const int MIN_ENEMIES = SIZE;
+const int MIN_ENEMIES = MAP_SIZE;
 
 /**
  * Maximum number of enemies spawned.
  */
-const int MAX_ENEMIES = SIZE + 5;
+const int MAX_ENEMIES = MAP_SIZE + 5;
 
 /**
  * Represents a 2-dimensional vector.
@@ -47,23 +56,23 @@ int rand_range(int a, int b);
 /**
  * Generates n enemies on the map randomly.
  */
-void generate_enemies(bool map[SIZE][SIZE], int n);
+void generate_enemies(bool map[MAP_SIZE][MAP_SIZE], int n);
 
 /**
  * Checks whether map contains any full row.
  */
-bool contains_full_row(bool map[SIZE][SIZE]);
+bool contains_full_row(bool map[MAP_SIZE][MAP_SIZE]);
 
 /**
  * Checks whether map contains any full column.
  */
-bool contains_full_col(bool map[SIZE][SIZE]);
+bool contains_full_col(bool map[MAP_SIZE][MAP_SIZE]);
 
 /**
  * Initializes the game object with either zero values or randomly generated
  * values.
  */
-Game init_game(bool map[SIZE][SIZE]);
+Game init_game(bool map[MAP_SIZE][MAP_SIZE]);
 
 /**
  * Clears the terminal screen.
@@ -80,10 +89,25 @@ void render(const Game &game);
  */
 void handle_input(Game &game);
 
+
+#ifdef _WIN32 // Windows
+
+void setConsoleColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+#else // Unix-based systems
+
+void setConsoleColor(int color) {
+    cout << "\033[1;" << color << "m";
+}
+
+#endif
+
 int main() {
   srand(time(0));
 
-  bool map[SIZE][SIZE] = {};
+  bool map[MAP_SIZE][MAP_SIZE] = {};
   Game game = init_game(map);
 
   while (true) {
@@ -123,13 +147,13 @@ int main() {
 
 int rand_range(int a, int b) { return rand() % (b - a) + a; }
 
-void generate_enemies(bool map[SIZE][SIZE], int n) {
+void generate_enemies(bool map[MAP_SIZE][MAP_SIZE], int n) {
   int num_inserted_enemies = 0;
 
   while (num_inserted_enemies < n) {
     Point p = {
-        .x = rand() % SIZE,
-        .y = rand() % SIZE,
+        .x = rand() % MAP_SIZE,
+        .y = rand() % MAP_SIZE,
     };
 
     if (!map[p.y][p.x]) {
@@ -139,10 +163,10 @@ void generate_enemies(bool map[SIZE][SIZE], int n) {
   }
 }
 
-bool contains_full_row(bool map[SIZE][SIZE]) {
-  for (int i = 0; i < SIZE; ++i) {
+bool contains_full_row(bool map[MAP_SIZE][MAP_SIZE]) {
+  for (int i = 0; i < MAP_SIZE; ++i) {
     bool full = true;
-    for (int j = 0; j < SIZE; ++j) {
+    for (int j = 0; j < MAP_SIZE; ++j) {
       if (!map[i][j]) {
         full = false;
       }
@@ -156,10 +180,10 @@ bool contains_full_row(bool map[SIZE][SIZE]) {
   return false;
 }
 
-bool contains_full_col(bool map[SIZE][SIZE]) {
-  for (int i = 0; i < SIZE; ++i) {
+bool contains_full_col(bool map[MAP_SIZE][MAP_SIZE]) {
+  for (int i = 0; i < MAP_SIZE; ++i) {
     bool full = true;
-    for (int j = 0; j < SIZE; ++j) {
+    for (int j = 0; j < MAP_SIZE; ++j) {
       if (!map[j][i]) {
         full = false;
       }
@@ -173,7 +197,7 @@ bool contains_full_col(bool map[SIZE][SIZE]) {
   return false;
 }
 
-Game init_game(bool map[SIZE][SIZE]) {
+Game init_game(bool map[MAP_SIZE][MAP_SIZE]) {
   int num_enemies = rand_range(MIN_ENEMIES, MAX_ENEMIES + 1);
 
   do {
@@ -182,8 +206,8 @@ Game init_game(bool map[SIZE][SIZE]) {
 
   Point spaceship;
   do {
-    spaceship.y = rand() % SIZE;
-    spaceship.x = rand() % SIZE;
+    spaceship.y = rand() % MAP_SIZE;
+    spaceship.x = rand() % MAP_SIZE;
   } while (map[spaceship.y][spaceship.x]);
 
   Game game = {
@@ -210,9 +234,11 @@ void render(const Game &game) {
 
   cout << "health: " << game.health << "\n\n";
 
-  for (int ifor = 0; ifor < 2 * SIZE; ++ifor) {
+  setConsoleColor(9);
+
+  for (int ifor = 0; ifor < 2 * MAP_SIZE; ++ifor) {
     if (ifor % 2 == 0) {
-      for (int j = 0; j < SIZE; ++j) {
+      for (int j = 0; j < MAP_SIZE; ++j) {
         cout << " ---";
       }
 
@@ -221,30 +247,39 @@ void render(const Game &game) {
     }
 
     int i = ifor / 2;
-    for (int j = 0; j < SIZE; ++j) {
+    for (int j = 0; j < MAP_SIZE; ++j) {
+      
+      cout << "|";
       char ch = ' ';
       if (game.spaceship.y == i && game.spaceship.x == j) {
+        setConsoleColor(6);
         ch = 'O';
       } else if (game.map[i][j]) {
+        setConsoleColor(4);
         ch = '*';
       }
 
-      cout << "| " << ch << " ";
+      cout << " " << ch << " ";
+      setConsoleColor(9);
     }
 
     cout << "|" << endl;
   }
 
-  for (int j = 0; j < SIZE; ++j) {
+  for (int j = 0; j < MAP_SIZE; ++j) {
     cout << " ---";
   }
   cout << endl;
+
+  setConsoleColor(15);
 }
 
 void handle_input(Game &game) {
+  
+
   while (true) {
     char cmd;
-    cout << "[M]ove, [A]ttack, or [Q]uit (m|a|q): ";
+    cout << endl << "[M]ove, [A]ttack, or [Q]uit (m|a|q): ";
     cin >> cmd;
 
     switch (tolower(cmd)) {
@@ -263,11 +298,11 @@ void handle_input(Game &game) {
           --game.spaceship.x;
         break;
       case 's':
-        if (game.spaceship.y < SIZE - 1)
+        if (game.spaceship.y < MAP_SIZE - 1)
           ++game.spaceship.y;
         break;
       case 'd':
-        if (game.spaceship.x < SIZE - 1)
+        if (game.spaceship.x < MAP_SIZE - 1)
           ++game.spaceship.x;
         break;
       }
@@ -295,7 +330,7 @@ void handle_input(Game &game) {
         }
         break;
       case 'd':
-        for (int j = game.spaceship.x + 1; j < SIZE; ++j) {
+        for (int j = game.spaceship.x + 1; j < MAP_SIZE; ++j) {
           if (game.map[game.spaceship.y][j]) {
             game.map[game.spaceship.y][j] = false;
             --game.num_enemies;
